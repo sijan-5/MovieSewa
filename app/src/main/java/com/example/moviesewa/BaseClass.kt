@@ -1,4 +1,8 @@
 package com.example.moviesewa
 
-class BaseClass {
+import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
+
+@HiltAndroidApp
+class BaseClass : Application(){
 }
