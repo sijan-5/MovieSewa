@@ -1,29 +1,22 @@
 package com.example.moviesewa
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
-import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.LayoutManager
+import com.example.moviesewa.adapter.MovieAdapter
 import com.example.moviesewa.data_classes.MovieData
 import com.example.moviesewa.data_classes.Result
 import com.example.moviesewa.databinding.FragmentHomeBinding
 import com.example.moviesewa.mvvm.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -42,10 +35,10 @@ class HomeFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    lateinit var binding : FragmentHomeBinding
+    lateinit var binding: FragmentHomeBinding
     private lateinit var switchOnOff: SwitchCompat
-    private lateinit var dataList : MutableList<MovieData>
-    val viewModel : MovieViewModel by viewModels()
+    private lateinit var dataList: MutableList<MovieData>
+    val viewModel: MovieViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,7 +53,7 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        binding = FragmentHomeBinding.inflate(inflater,container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -68,45 +61,43 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         switchOnOff = view.findViewById(R.id.switchOnOff)
-        switchOnOff.setOnCheckedChangeListener{_, checked ->
-            when{
+        switchOnOff.setOnCheckedChangeListener { _, checked ->
+            when {
                 checked -> Toast.makeText(requireContext(), "week", Toast.LENGTH_SHORT).show()
                 else -> Toast.makeText(requireContext(), "day", Toast.LENGTH_SHORT).show()
             }
         }
 
-        fetchData()
+         CoroutineScope(Dispatchers.IO).launch {
+             fetchData()
+        }
         setUpRecyclerView()
     }
 
-    private fun fetchData()
-    {
-        lifecycleScope.launch {
-            withContext(Dispatchers.IO)
-            {
-                val response = viewModel.getMovies()
-                if (response.isSuccessful) {
-                    Log.d("size",makeDataList(response.body()!!.results).toString())
-                }
-            }
-        }
-    }
+    private suspend fun fetchData() {
 
-    fun makeDataList( results : List<Result>) : Int
-    {
-        dataList = mutableListOf<MovieData>()
+        val job = CoroutineScope(Dispatchers.IO).async{
+            val response = viewModel.getMovies()
+            dataList = makeDataList(results = response.body()!!.results)
+        }
+       job.await()
+    }c
+
+    fun makeDataList(results: List<Result>)  : MutableList<MovieData>{
+        val dup_dataList = mutableListOf<MovieData>()
         results.map { result ->
-            dataList.add(MovieData(result.poster_path, result.title, result.release_date))
+            dup_dataList.add(MovieData(result.poster_path, result.title, result.release_date))
         }
-        return  dataList.size
+
+        return dup_dataList
     }
 
-    private fun setUpRecyclerView()
-    {
+    private fun setUpRecyclerView() {
         binding.movesRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-
+            adapter = MovieAdapter(dataList, requireContext())
         }
     }
 
