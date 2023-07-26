@@ -7,7 +7,7 @@ import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
-class MovieViewModel @Inject constructor(val repository: RepositoryInterface) : ViewModel() {
+class MovieViewModel @Inject constructor(private val repository: RepositoryInterface) : ViewModel() {
 
     suspend fun getMovies() : Response<TrendingMovies>
     {

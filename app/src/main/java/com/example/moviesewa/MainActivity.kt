@@ -30,13 +30,12 @@ class MainActivity : AppCompatActivity() {
         binding.bottomNavigation.setupWithNavController(navController)
 
 
-        lifecycleScope.launch {
-            val response = viewModel.getMovies()
-            if (response.isSuccessful) {
-                Log.d("fish", response.body().toString())
-            }
-
-        }
+//        lifecycleScope.launch {
+//            val response = viewModel.getMovies()
+//            if (response.isSuccessful) {
+//                Log.d("fish", response.body().toString())
+//            }
+//
+//        }
     }
-
 }
