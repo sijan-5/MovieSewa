@@ -11,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.moviesewa.R
 import com.example.moviesewa.data_classes.MovieData
 
-class MovieAdapter(val movieList : MutableList<MovieData>, val context : Context) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>()
+class MovieAdapter(val movieList : List<MovieData>, val context : Context) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>()
 {
 
     private val image_base_url = "https://image.tmdb.org/t/p/w500"
@@ -38,9 +38,8 @@ class MovieAdapter(val movieList : MutableList<MovieData>, val context : Context
     class MovieViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
     {
          val posterView: ImageView = itemView.findViewById(R.id.posterView)
-        val movieTitle: TextView = itemView.findViewById(R.id.movieTitle)
+         val movieTitle: TextView = itemView.findViewById(R.id.movieTitle)
          val movieReleaseDate : TextView = itemView.findViewById(R.id.movieReleaseDate)
-
     }
 
 }

@@ -1,6 +1,7 @@
 package com.example.moviesewa
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -68,36 +69,21 @@ class HomeFragment : Fragment() {
             }
         }
 
-         CoroutineScope(Dispatchers.IO).launch {
-             fetchData()
-        }
         setUpRecyclerView()
-    }
-
-    private suspend fun fetchData() {
-
-        val job = CoroutineScope(Dispatchers.IO).async{
-            val response = viewModel.getMovies()
-            dataList = makeDataList(results = response.body()!!.results)
-        }
-       job.await()
-    }c
-
-    fun makeDataList(results: List<Result>)  : MutableList<MovieData>{
-        val dup_dataList = mutableListOf<MovieData>()
-        results.map { result ->
-            dup_dataList.add(MovieData(result.poster_path, result.title, result.release_date))
+        lifecycleScope.launch {
+            viewModel.getMovies()
         }
 
-        return dup_dataList
+        viewModel.movieList.observe(viewLifecycleOwner) {moviesList ->
+            binding.movesRecyclerView.adapter = MovieAdapter(moviesList, requireContext())
+        }
     }
+
 
     private fun setUpRecyclerView() {
         binding.movesRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-
-            adapter = MovieAdapter(dataList, requireContext())
         }
     }
 
