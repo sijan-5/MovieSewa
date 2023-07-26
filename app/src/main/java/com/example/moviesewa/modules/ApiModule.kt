@@ -19,7 +19,6 @@ object ApiModule {
     @Provides
     @Singleton
     fun provideApi() : MovieServiceApi {
-
 //        return ApiImpl()
         return Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl("https://api.themoviedb.org/3/").build()
             .create(MovieServiceApi::class.java)

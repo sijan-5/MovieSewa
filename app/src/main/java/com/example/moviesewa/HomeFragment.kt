@@ -14,10 +14,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviesewa.adapter.MovieAdapter
 import com.example.moviesewa.data_classes.MovieData
 import com.example.moviesewa.data_classes.Result
+import com.example.moviesewa.data_classes.TrendingMovies
 import com.example.moviesewa.databinding.FragmentHomeBinding
 import com.example.moviesewa.mvvm.MovieViewModel
+import com.example.moviesewa.mvvm.ResponseResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -68,17 +72,36 @@ class HomeFragment : Fragment() {
                 else -> Toast.makeText(requireContext(), "day", Toast.LENGTH_SHORT).show()
             }
         }
-
         setUpRecyclerView()
-        lifecycleScope.launch {
-            viewModel.getMovies()
-        }
 
-        viewModel.movieList.observe(viewLifecycleOwner) {moviesList ->
-            binding.movesRecyclerView.adapter = MovieAdapter(moviesList, requireContext())
+        lifecycleScope.launch {
+            viewModel.getMovies().collect{ result ->
+
+                when(result)
+                {
+                    is ResponseResult.Loading -> {
+                        binding.progressBar.visibility = View.VISIBLE
+                    }
+
+                    is ResponseResult.Success ->
+                    {
+                        val movieList = mutableListOf<MovieData>()
+                        val movies = result.successData.results
+                        movies.map {
+                            movieList.add(MovieData(it.poster_path, it.title, it.release_date))
+                        }
+                        binding.movesRecyclerView.adapter = MovieAdapter(movieList, requireContext())
+                        binding.progressBar.visibility = View.INVISIBLE
+                    }
+                    is ResponseResult.Failure ->
+                    {
+                        Toast.makeText(requireContext(), result.error, Toast.LENGTH_SHORT).show()
+                        binding.progressBar.visibility = View.INVISIBLE
+                    }
+                }
+            }
         }
     }
-
 
     private fun setUpRecyclerView() {
         binding.movesRecyclerView.apply {
@@ -86,7 +109,6 @@ class HomeFragment : Fragment() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
     }
-
 
     companion object {
         /**
