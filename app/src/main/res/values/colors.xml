@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="navy_blue">#202A44</color>
     <color name="gray">#808080</color>
+    <color name="search_button_bg_color">#BEED53</color>
 </resources>

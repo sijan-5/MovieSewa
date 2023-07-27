@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".HomeFragment"
+    tools:context=".fragments.HomeFragment"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
@@ -25,10 +25,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bg_view"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/background_view"
+        android:layout_height="0dp"
         android:background="@drawable/open_hem"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingBottom="@dimen/dimen_16"
+        android:paddingBottom="@dimen/dimen_24"
         >
 
         <LinearLayout
@@ -45,55 +45,69 @@
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Welcome."
+                android:text="@string/welcome"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="40sp"
+                android:textSize="@dimen/dimen_32sp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Millions of movies, TV"
+                android:text="@string/millions_of_movies_tv"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="30sp"
+                android:textSize="@dimen/dimen_24sp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Shows and people to"
+                android:text="@string/shows_and_people_to"
                 android:layout_marginTop="@dimen/dimen_4"
                 android:textColor="@color/white"
                 android:textStyle="bold"
-                android:textSize="30sp"
+                android:textSize="@dimen/dimen_24sp"
                 />
             <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="discover.Explore now."
+                android:text="@string/discover_explore_now"
                 android:textColor="@color/white"
                 android:layout_marginTop="@dimen/dimen_4"
                 android:textStyle="bold"
-                android:textSize="30sp"
+                android:textSize="@dimen/dimen_24sp"
                 />
         </LinearLayout>
 
-
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_48"
+            android:layout_height="@dimen/dimen_40"
             app:layout_constraintTop_toBottomOf="@id/initialTextsLayout"
             android:hint="Search for a movie,tv show.."
             android:textColorHint="@color/black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="@dimen/dimen_16"
-            android:background="@drawable/khoj"
+            android:background="@drawable/search_bg"
             android:layout_marginEnd="@dimen/dimen_16"
             android:paddingStart="@dimen/dimen_16"
-            android:paddingRight="100dp"
+            android:paddingEnd="@dimen/dimen_16"
             android:layout_marginTop="@dimen/dimen_24"
             />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/dimen_40"
+            android:background="@drawable/search_bg"
+            app:layout_constraintTop_toBottomOf="@id/initialTextsLayout"
+            android:layout_marginTop="@dimen/dimen_24"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/dimen_16"
+            android:backgroundTint="@color/search_button_bg_color"
+            android:text="@string/search"
+            android:textColor="@color/white"
+            />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -114,8 +128,8 @@
             android:id="@+id/switchOnOff"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:textOn="Week"
-            android:textOff="Day"
+            android:textOn="@string/week"
+            android:textOff="@string/day"
             app:switchTextAppearance="@style/textFormatting"
             app:showText="true"
             android:thumb="@drawable/thumb_selector"
@@ -137,5 +151,4 @@
             android:layout_marginTop="@dimen/dimen_16"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>

@@ -11,10 +11,12 @@ import com.bumptech.glide.Glide
 import com.example.moviesewa.R
 import com.example.moviesewa.data_classes.MovieData
 
-class MovieAdapter(val movieList : List<MovieData>, val context : Context) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>()
+
+ val image_base_url = "https://image.tmdb.org/t/p/w500"
+class MovieAdapter(private val movieList : List<MovieData>,private val context : Context,val  onClick : (Int) ->Unit) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>()
 {
 
-    private val image_base_url = "https://image.tmdb.org/t/p/w500"
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.trending_movie_recycler_view_item, parent, false)
         return MovieViewHolder(view)
@@ -30,10 +32,12 @@ class MovieAdapter(val movieList : List<MovieData>, val context : Context) : Rec
 
         holder.movieTitle.text = item.title
         holder.movieReleaseDate.text = item.releaseData
-
         Glide.with(context).load(image_base_url + item.posterPath).into(holder.posterView)
-    }
 
+        holder.itemView.setOnClickListener {
+            this.onClick(item.movieId)
+        }
+    }
 
     class MovieViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
     {

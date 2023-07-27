@@ -1,5 +1,6 @@
 package com.example.moviesewa.mvvm
 
+import com.example.moviesewa.data_classes.MovieDetails
 import com.example.moviesewa.data_classes.TrendingMovies
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -10,6 +11,13 @@ class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : Rep
        return checkApiResponse{
            movieApi.getMovieList("day")
        }
+    }
+
+    override suspend fun getMovieDetails(movieId :Int): Flow<ResponseResult<MovieDetails>> {
+
+        return checkApiResponse {
+            movieApi.getMovieDetails(movieId)
+        }
     }
 }
 

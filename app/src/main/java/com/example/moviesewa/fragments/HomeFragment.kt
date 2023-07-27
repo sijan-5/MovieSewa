@@ -1,33 +1,25 @@
-package com.example.moviesewa
+package com.example.moviesewa.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.moviesewa.R
 import com.example.moviesewa.adapter.MovieAdapter
 import com.example.moviesewa.data_classes.MovieData
-import com.example.moviesewa.data_classes.Result
-import com.example.moviesewa.data_classes.TrendingMovies
 import com.example.moviesewa.databinding.FragmentHomeBinding
 import com.example.moviesewa.mvvm.MovieViewModel
 import com.example.moviesewa.mvvm.ResponseResult
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -48,8 +40,7 @@ class HomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -88,9 +79,26 @@ class HomeFragment : Fragment() {
                         val movieList = mutableListOf<MovieData>()
                         val movies = result.successData.results
                         movies.map {
-                            movieList.add(MovieData(it.poster_path, it.title, it.release_date))
+                            movieList.add(
+                                MovieData(
+                                    it.poster_path,
+                                    it.title,
+                                    it.release_date,
+                                    it.id
+                                )
+                            )
                         }
-                        binding.movesRecyclerView.adapter = MovieAdapter(movieList, requireContext())
+                        binding.movesRecyclerView.adapter =
+                            MovieAdapter(movieList, requireContext())
+                            {
+                                val bundle = bundleOf(
+                                    "ID" to it
+                                )
+                                findNavController().navigate(
+                                    R.id.action_homeFragment_to_detailsFragment,
+                                    bundle
+                                )
+                            }
                         binding.progressBar.visibility = View.INVISIBLE
                     }
                     is ResponseResult.Failure ->
@@ -110,23 +118,5 @@ class HomeFragment : Fragment() {
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment HomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }
