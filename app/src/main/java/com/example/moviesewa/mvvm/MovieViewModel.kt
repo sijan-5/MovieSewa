@@ -11,5 +11,5 @@ import javax.inject.Inject
 class MovieViewModel @Inject constructor(private val repository: RepositoryInterface) : ViewModel() {
     suspend fun getMovies() : Flow<ResponseResult<MoviesCollection>> = repository.fetchMovies()
     suspend fun getMovieDetails(movieId : Int) : Flow<ResponseResult<MovieDetails>> = repository.getMovieDetails(movieId)
-    suspend fun searchMovie(query :String, api_key :String) = repository.searchMovie(query, api_key)
+    suspend fun searchMovie(query :String) : Flow<ResponseResult<MoviesCollection>> = repository.searchMovie(query)
 }

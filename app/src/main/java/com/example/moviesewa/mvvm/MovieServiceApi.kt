@@ -30,6 +30,6 @@ interface MovieServiceApi{
         "accept: application/json"
     )
     @GET("search/movie")
-    suspend fun searchMovie(@Query("query") query :String, @Query("api_key") api_key :String) : MoviesCollection
+    suspend fun searchMovie(@Query("query") query :String, @Query("api_key") api_key : String ="78cec9d5b33781dd70509ca0e6e88019"):MoviesCollection
 }
 

@@ -4,11 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-
 import com.example.moviesewa.R
-import com.example.moviesewa.adapter.ARG_OBJECT
 
 class PeopleFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,10 +27,6 @@ class PeopleFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-
-
-        }
     }
-
 }
+

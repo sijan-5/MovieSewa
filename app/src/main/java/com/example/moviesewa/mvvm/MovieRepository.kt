@@ -1,9 +1,12 @@
 package com.example.moviesewa.mvvm
 
+import android.util.Log
 import com.example.moviesewa.data_classes.MovieDetails
 import com.example.moviesewa.data_classes.MoviesCollection
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : RepositoryInterface{
@@ -20,12 +23,11 @@ class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : Rep
     }
 
     override suspend fun searchMovie(
-        query: String,
-        api_key: String
+        query: String
     ): Flow<ResponseResult<MoviesCollection>> {
 
         return checkApiResponse {
-            movieApi.searchMovie(query, api_key)
+            movieApi.searchMovie(query)
         }
     }
 }
@@ -33,21 +35,25 @@ class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : Rep
 fun <T> checkApiResponse(block : suspend () -> T)  : Flow<ResponseResult<T>>
 {
     return flow {
-        emit(ResponseResult.Loading())
+        emit(ResponseResult.Loading)
 
         try {
             emit(ResponseResult.Success(block()))
         }
-        catch (e : Exception)
+        catch (e:Exception)
         {
-            emit(ResponseResult.Failure(e.message.toString()))
+            Log.d("error", e.message.toString())
         }
+    }.catch {
+
+        Log.d("error", it.message.toString())
+        emit(ResponseResult.Failure(it.message))
     }
 }
 
 sealed class ResponseResult<out T>
 {
     class Success <T> (val successData : T): ResponseResult<T>()
-    class Loading : ResponseResult<Nothing>()
-    class Failure<F> ( val error : String) : ResponseResult<F>()
+    object Loading : ResponseResult<Nothing>()
+    class Failure<F> ( val error : String?) : ResponseResult<F>()
 }

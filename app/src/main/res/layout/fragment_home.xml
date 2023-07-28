@@ -79,6 +79,7 @@
         </LinearLayout>
 
         <EditText
+            android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="@dimen/dimen_40"
             app:layout_constraintTop_toBottomOf="@id/initialTextsLayout"
@@ -97,7 +98,7 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/search_button"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/dimen_40"
+            android:layout_height="40dp"
             android:background="@drawable/search_bg"
             app:layout_constraintTop_toBottomOf="@id/initialTextsLayout"
             android:layout_marginTop="@dimen/dimen_24"
