@@ -1,22 +1,31 @@
 package com.example.moviesewa.mvvm
 
 import com.example.moviesewa.data_classes.MovieDetails
-import com.example.moviesewa.data_classes.TrendingMovies
+import com.example.moviesewa.data_classes.MoviesCollection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : RepositoryInterface{
-    override suspend fun fetchMovies() : kotlinx.coroutines.flow.Flow<ResponseResult<TrendingMovies>>{
+    override suspend fun fetchMovies() : kotlinx.coroutines.flow.Flow<ResponseResult<MoviesCollection>>{
        return checkApiResponse{
            movieApi.getMovieList("day")
        }
     }
 
     override suspend fun getMovieDetails(movieId :Int): Flow<ResponseResult<MovieDetails>> {
-
         return checkApiResponse {
             movieApi.getMovieDetails(movieId)
+        }
+    }
+
+    override suspend fun searchMovie(
+        query: String,
+        api_key: String
+    ): Flow<ResponseResult<MoviesCollection>> {
+
+        return checkApiResponse {
+            movieApi.searchMovie(query, api_key)
         }
     }
 }

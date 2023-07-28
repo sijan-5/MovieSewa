@@ -63,8 +63,12 @@ class HomeFragment : Fragment() {
                 else -> Toast.makeText(requireContext(), "day", Toast.LENGTH_SHORT).show()
             }
         }
-        setUpRecyclerView()
 
+        binding.searchButton.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_searchActivity)
+        }
+
+        setUpRecyclerView()
         lifecycleScope.launch {
             viewModel.getMovies().collect{ result ->
 
@@ -109,6 +113,8 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+
+
     }
 
     private fun setUpRecyclerView() {

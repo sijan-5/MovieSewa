@@ -1,20 +1,15 @@
 package com.example.moviesewa.mvvm
 
-import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.moviesewa.data_classes.MovieData
 import com.example.moviesewa.data_classes.MovieDetails
-import com.example.moviesewa.data_classes.TrendingMovies
+import com.example.moviesewa.data_classes.MoviesCollection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(private val repository: RepositoryInterface) : ViewModel() {
-
-    suspend fun getMovies() : Flow<ResponseResult<TrendingMovies>> = repository.fetchMovies()
+    suspend fun getMovies() : Flow<ResponseResult<MoviesCollection>> = repository.fetchMovies()
     suspend fun getMovieDetails(movieId : Int) : Flow<ResponseResult<MovieDetails>> = repository.getMovieDetails(movieId)
+    suspend fun searchMovie(query :String, api_key :String) = repository.searchMovie(query, api_key)
 }

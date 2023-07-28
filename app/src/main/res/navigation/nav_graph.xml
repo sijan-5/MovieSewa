@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_searchActivity"
+            app:destination="@id/searchActivity" />
     </fragment>
 
     <fragment
@@ -37,4 +40,8 @@
         tools:layout="@layout/fragment_details" />
 
 
+    <activity
+        android:id="@+id/searchActivity"
+        android:name="com.example.moviesewa.SearchActivity"
+        />
 </navigation>

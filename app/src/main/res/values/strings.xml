@@ -13,5 +13,6 @@
     <string name="welcome">Welcome.</string>
     <string name="week">Week</string>
     <string name="day">Day</string>
+    <string name="search_results">Search Results</string>
 
 </resources>

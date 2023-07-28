@@ -1,6 +1,6 @@
 package com.example.moviesewa.data_classes
 
-data class TrendingMovies(
+data class MoviesCollection(
     val page: Int,
     val results: List<Result>,
     val total_pages: Int,

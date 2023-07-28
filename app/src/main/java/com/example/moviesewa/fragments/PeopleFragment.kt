@@ -4,20 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 
 import com.example.moviesewa.R
+import com.example.moviesewa.adapter.ARG_OBJECT
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PeopleFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PeopleFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,5 +26,14 @@ class PeopleFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_people, container, false)
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
+
+
+        }
+    }
 
 }
