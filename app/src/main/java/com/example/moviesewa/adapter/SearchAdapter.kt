@@ -28,7 +28,6 @@ class SearchAdapter(val list : List<SearchMovies>,val  context :Context) : Recyc
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         val item = list[position]
-
         Glide.with(context).load(image_base_url + item.posterPath).into(holder.posterImage)
         holder.title.text = item.title
         holder.releaseDate.text = item.releaseDate

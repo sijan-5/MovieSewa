@@ -5,8 +5,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviesewa.adapter.ARG_OBJECT
@@ -28,6 +30,8 @@ class SearchMovieFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
+
+
         }
     }
 
@@ -37,20 +41,27 @@ class SearchMovieFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentSearchMovieBinding.inflate(layoutInflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-        getSearchResponse()
+
+
+
+        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
+           val  query = getString(ARG_OBJECT).toString()
+            getSearchResponse(query)
+            Log.d("qqqq", query)
+        }
     }
 
-    private fun getSearchResponse() {
+    private fun getSearchResponse(query :String) {
+        Log.d("qqqqq", query.toString())
         val searchMovieList = mutableListOf<SearchMovies>()
         lifecycleScope.launch {
-            viewModel.searchMovie("titanic")
+            viewModel.searchMovie(query)
                 .collect { result ->
                     when (result) {
                         is ResponseResult.Loading -> Log.d("i am not", "loading")

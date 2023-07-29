@@ -1,5 +1,6 @@
 package com.example.moviesewa.mvvm
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.moviesewa.data_classes.MovieDetails
 import com.example.moviesewa.data_classes.MoviesCollection
@@ -9,6 +10,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(private val repository: RepositoryInterface) : ViewModel() {
+
+    val queryLiveData : MutableLiveData<String>  = MutableLiveData()
     suspend fun getMovies() : Flow<ResponseResult<MoviesCollection>> = repository.fetchMovies()
     suspend fun getMovieDetails(movieId : Int) : Flow<ResponseResult<MovieDetails>> = repository.getMovieDetails(movieId)
     suspend fun searchMovie(query :String) : Flow<ResponseResult<MoviesCollection>> = repository.searchMovie(query)

@@ -18,6 +18,7 @@
             app:destination="@id/searchActivity" />
     </fragment>
 
+
     <fragment
         android:id="@+id/moviesFragment"
         android:name="com.example.moviesewa.fragments.MoviesFragment"

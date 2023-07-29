@@ -28,16 +28,15 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-
-        setUpViewpagerAndTabLayout()
+        val received = intent.getStringExtra("sKey")
+        setUpViewpagerAndTabLayout(received)
     }
 
 
-    private fun setUpViewpagerAndTabLayout()
+    private fun setUpViewpagerAndTabLayout(query : String?)
     {
-        viewPagerAdapter = ViewPagerAdapter(this)
+        viewPagerAdapter = ViewPagerAdapter(this, query)
         binding.pager.adapter = viewPagerAdapter
-
         TabLayoutMediator(binding.myTabLayout, binding.pager) { tab, position ->
             tab.text = tabLayoutItems[position]
         }.attach()

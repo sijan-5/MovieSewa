@@ -39,14 +39,14 @@ fun <T> checkApiResponse(block : suspend () -> T)  : Flow<ResponseResult<T>>
 
         try {
             emit(ResponseResult.Success(block()))
+            throw Exception("error occured")
         }
         catch (e:Exception)
         {
-            Log.d("error", e.message.toString())
+            Log.d(" hi error", e.message.toString())
         }
     }.catch {
-
-        Log.d("error", it.message.toString())
+        Log.d("catch error", it.message.toString())
         emit(ResponseResult.Failure(it.message))
     }
 }

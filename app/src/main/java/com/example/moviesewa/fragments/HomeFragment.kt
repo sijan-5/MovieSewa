@@ -21,17 +21,9 @@ import com.example.moviesewa.mvvm.ResponseResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
     lateinit var binding: FragmentHomeBinding
     private lateinit var switchOnOff: SwitchCompat
     private lateinit var dataList: MutableList<MovieData>
@@ -65,7 +57,10 @@ class HomeFragment : Fragment() {
         }
 
         binding.searchButton.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_searchActivity)
+            val inputQuery = binding.searchEditText.text.toString()
+            viewModel.queryLiveData.value = inputQuery
+            val searchQueryBundle = bundleOf("sKey" to inputQuery)
+            findNavController().navigate(R.id.action_homeFragment_to_searchActivity,searchQueryBundle )
         }
 
         setUpRecyclerView()
@@ -113,7 +108,6 @@ class HomeFragment : Fragment() {
                 }
             }
         }
-
 
     }
 
