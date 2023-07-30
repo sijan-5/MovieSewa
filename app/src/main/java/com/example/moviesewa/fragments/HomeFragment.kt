@@ -5,8 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviesewa.R
 import com.example.moviesewa.adapter.MovieAdapter
+import com.example.moviesewa.data_classes.Movie
 import com.example.moviesewa.data_classes.MovieData
 import com.example.moviesewa.databinding.FragmentHomeBinding
 import com.example.moviesewa.mvvm.MovieViewModel
@@ -27,14 +26,19 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
     var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
-    val viewModel: MovieViewModel by viewModels()
+    private val viewModel: MovieViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
+    private val adapter =
+        MovieAdapter()
+        {
+            val bundle = bundleOf(
+                "ID" to it
+            )
+            findNavController().navigate(
+                R.id.action_homeFragment_to_detailsFragment,
+                bundle
+            )
         }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,17 +53,14 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
 
-        lifecycleScope.launch {
-            viewModel.getLatestTvId().collect{result ->
-                when(result)
-                {
-                    is ResponseResult.Failure ->Log.d("f","f")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getLatestTvId().collect { result ->
+                when (result) {
+                    is ResponseResult.Failure -> Log.d("f", "f")
                     is ResponseResult.Success -> viewModel.getLatestTvId()
-                    is ResponseResult.Loading ->Log.d("f", "l")
+                    is ResponseResult.Loading -> Log.d("f", "l")
                 }
             }
-
-
         }
 
         binding.switchOnOff.setOnCheckedChangeListener { _, checked ->
@@ -79,50 +80,30 @@ class HomeFragment : Fragment() {
         fetchDailyTrending(context!!.getString(R.string.weekly))
     }
 
-    fun fetchDailyTrending(time_window : String)
-    {
-        lifecycleScope.launch {
+    private fun fetchDailyTrending(time_window: String) {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMovies(time_window).collect { result ->
                 handleResult(result) { successResult ->
-                    val movieList = mutableListOf<MovieData>()
-                    val movies = successResult.results
-                    movies.map {
-                        movieList.add(
-                            MovieData(
-                                it.poster_path,
-                                it.title,
-                                it.release_date,
-                                it.id
-                            )
-                        )
+
+                    val movieList = successResult.results.map {
+                        it.toMovieData()
                     }
-                    val adapter =
-                        MovieAdapter()
-                        {
-                            val bundle = bundleOf(
-                                "ID" to it
-                            )
-                            findNavController().navigate(
-                                R.id.action_homeFragment_to_detailsFragment,
-                                bundle
-                            )
-                        }
+
                     adapter.submitList(movieList)
-                    binding.movesRecyclerView.adapter = adapter
                     binding.progressBar.visibility = View.INVISIBLE
                 }
             }
         }
     }
 
+
     private fun <T> handleResult(result: ResponseResult<T>, onSuccess: (T) -> Unit) {
         handleSuccess(result, success = onSuccess)
-        {failure ->
+        { failure ->
             binding.progressBar.visibility = View.INVISIBLE
             Log.d("movieError", failure)
 
         }
-
     }
 
     private fun <T> handleSuccess(
@@ -130,19 +111,31 @@ class HomeFragment : Fragment() {
         success: (T) -> Unit,
         onFailure: (String) -> Unit
     ) {
-        when(result)
-        {
-            is ResponseResult.Loading -> {binding.progressBar.visibility = View.VISIBLE}
+        when (result) {
+            is ResponseResult.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
             is ResponseResult.Failure -> onFailure(result.error.toString())
             is ResponseResult.Success -> success(result.successData)
         }
     }
 
 
+    private fun Movie.toMovieData(): MovieData {
+        return MovieData(
+            this.poster_path,
+            this.title,
+            this.release_date,
+            this.id
+        )
+    }
+
     private fun setUpRecyclerView() {
         binding.movesRecyclerView.apply {
             layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+            adapter = this@HomeFragment.adapter
         }
     }
 

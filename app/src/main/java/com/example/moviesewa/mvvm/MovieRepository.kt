@@ -32,7 +32,6 @@ class MovieRepository @Inject constructor(private val remoteMovieApi : MovieServ
     }
 
     override suspend fun latestTvId(): Flow<ResponseResult<LatestTVID>> {
-
        return  checkApiResponse {
             remoteMovieApi.latestTV()
         }
@@ -46,16 +45,12 @@ fun <T> checkApiResponse(block : suspend () -> T)  : Flow<ResponseResult<T>>
 
         try {
             emit(ResponseResult.Success(block()))
-            throw Exception("error occured")
         }
         catch (e:Exception)
         {
-            Log.d(" hi error", e.message.toString())
+            Log.d("error", e.message.toString())
             emit(ResponseResult.Failure(e.message))
         }
-    }.catch {
-        Log.d("catch error", it.message.toString())
-        emit(ResponseResult.Failure(it.message))
     }
 }
 
@@ -63,5 +58,5 @@ sealed class ResponseResult<out T>
 {
     class Success <T> (val successData : T): ResponseResult<T>()
     object Loading : ResponseResult<Nothing>()
-    class Failure<F> ( val error : String?) : ResponseResult<F>()
+    class Failure ( val error : String?) : ResponseResult<Nothing>()
 }
