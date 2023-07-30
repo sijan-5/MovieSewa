@@ -6,7 +6,6 @@ import com.example.moviesewa.data_classes.MovieDetails
 import com.example.moviesewa.data_classes.MoviesCollection
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,16 +23,9 @@ class MovieViewModel @Inject constructor(private val repository: RepositoryInter
         repository.searchMovie(query)
 
     suspend fun getLatestTvId(): Flow<ResponseResult<LatestTVID>> {
-        return flow {
-
-            repository.latestTvId().collect{
-                if (it is ResponseResult.Success)
-                {
-                    val id  = it.successData.id
-
-                }
-            }
-        }
+        return repository.latestTvId()
     }
+
+
 
 }
