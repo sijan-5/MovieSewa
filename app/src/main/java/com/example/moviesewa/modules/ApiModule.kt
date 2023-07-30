@@ -4,6 +4,7 @@ package com.example.moviesewa.modules
 import com.example.moviesewa.mvvm.MovieRepository
 import com.example.moviesewa.mvvm.MovieServiceApi
 import com.example.moviesewa.mvvm.RepositoryInterface
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,19 +16,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object ApiModule {
-    @Provides
-    @Singleton
-    fun provideApi() : MovieServiceApi {
-//        return ApiImpl()
-        return Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl("https://api.themoviedb.org/3/").build()
-            .create(MovieServiceApi::class.java)
-    }
+abstract class ApiModule {
 
-    @Provides
-    @Singleton
-    fun provideRepository(api : MovieServiceApi) : RepositoryInterface
+
+    companion object
     {
-        return MovieRepository(api)
+        @Provides
+        @Singleton
+        fun provideApi() : MovieServiceApi {
+//        return ApiImpl()
+            return Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl("https://api.themoviedb.org/3/").build()
+                .create(MovieServiceApi::class.java)
+        }
     }
+    @Binds
+    abstract fun provideRepository(movieRepository: MovieRepository) : RepositoryInterface
+
 }
