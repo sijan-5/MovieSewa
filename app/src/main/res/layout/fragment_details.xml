@@ -14,6 +14,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
    >
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        />
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
@@ -49,7 +60,7 @@
     </FrameLayout>
     <TextView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/frameLayout"
         android:text="The Little Mermaid"
@@ -59,6 +70,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:textSize="@dimen/dimen_20sp"
         android:layout_marginTop="@dimen/dimen_16"
+        android:layout_marginStart="@dimen/dimen_16"
+        android:layout_marginEnd="@dimen/dimen_16"
+        />
+
+    <TextView
+        android:id="@+id/progressPercentage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/popularityRate"
+        app:layout_constraintEnd_toEndOf="@id/popularityRate"
+        app:layout_constraintTop_toTopOf="@id/popularityRate"
+        app:layout_constraintBottom_toBottomOf="@id/popularityRate"
+        android:textColor="@color/white"
+        />
+    <ProgressBar
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/popularityRate"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title"
+        android:layout_marginTop="@dimen/dimen_32"
+        android:layout_marginStart="@dimen/dimen_24"
+        android:progress="10"
+        android:indeterminateOnly="false"
+        android:progressDrawable="@drawable/progressbar_bg"
         />
 
     <TextView
@@ -68,11 +104,11 @@
         android:text="User Score"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/title"
+        app:layout_constraintStart_toEndOf="@id/popularityRate"
+       app:layout_constraintTop_toTopOf="@id/popularityRate"
+        app:layout_constraintBottom_toBottomOf="@id/popularityRate"
         android:textSize="@dimen/dimen_16sp"
-        android:layout_marginTop="@dimen/dimen_48"
-        android:layout_marginStart="@dimen/dimen_48"
+        android:layout_marginStart="@dimen/dimen_16"
         />
 
     <View
@@ -90,7 +126,7 @@
         android:id="@+id/playTrailer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="User Score"
+        android:text="Play Trailer"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/scoreText"
@@ -108,24 +144,51 @@
         android:layout_marginTop="@dimen/dimen_40"
         android:backgroundTint="#1a5091"
         >
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             >
-
-            <TextView
-                android:id="@+id/date"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/horizontalView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="date"
+                android:layout_marginStart="@dimen/dimen_16"
+                android:layout_marginEnd="@dimen/dimen_16"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="@dimen/dimen_8"
-                android:textColor="@color/white"
-                android:textSize="@dimen/dimen_16sp"
-                android:fontFamily="sans-serif-condensed"
-                />
+                >
+                <TextView
+                    android:id="@+id/date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="date"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dimen_16sp"
+                    android:fontFamily="sans-serif-condensed"
+                    />
+                <TextView
+                    android:id="@+id/movieDuration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="date"
+                    android:layout_marginStart="@dimen/dimen_4"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/dimen_16sp"
+                    android:fontFamily="sans-serif-condensed"
+                    />
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+
             <TextView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/horizontalView"
                 android:id="@+id/genre"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -135,17 +198,17 @@
                 android:textSize="@dimen/dimen_16sp"
                 android:fontFamily="sans-serif-condensed"
                 />
-        </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/guff"
-        android:layout_width="wrap_content"
+        android:id="@+id/tagLine"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/dimen_20sp"
         android:textColor="#dcd3fe"
         app:layout_constraintTop_toBottomOf="@id/cardStrip"
-        android:text="guff"
+        android:text=""
         android:layout_marginTop="@dimen/dimen_16"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/dimen_16"
@@ -153,34 +216,32 @@
         android:textStyle="italic"
         />
     <TextView
-        android:id="@+id/overView"
+        android:id="@+id/overViewHead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/dimen_24sp"
+        android:textSize="@dimen/dimen_20sp"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/guff"
+        app:layout_constraintTop_toBottomOf="@id/tagLine"
         android:text="Overview"
         android:layout_marginTop="@dimen/dimen_12"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/dimen_16"
         android:layout_marginEnd="@dimen/dimen_16"
-        android:textStyle="bold"
+        android:fontFamily="sans-serif-condensed"
         />
 
     <TextView
-        android:id="@+id/overViewGuff"
-        android:layout_width="wrap_content"
+        android:id="@+id/overView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/dimen_16sp"
         android:textColor="@color/white"
-        app:layout_constraintTop_toBottomOf="@id/overView"
+        app:layout_constraintTop_toBottomOf="@id/overViewHead"
         android:text="Overview"
         android:layout_marginTop="@dimen/dimen_12"
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginStart="@dimen/dimen_16"
         android:layout_marginEnd="@dimen/dimen_16"
         />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

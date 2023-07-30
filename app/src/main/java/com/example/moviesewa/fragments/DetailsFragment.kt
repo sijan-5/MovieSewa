@@ -1,6 +1,7 @@
 package com.example.moviesewa.fragments
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -20,7 +21,8 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
     val viewModel : MovieViewModel by viewModels()
-    private lateinit var binding : FragmentDetailsBinding
+    private var _binding : FragmentDetailsBinding? = null
+    private  val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +35,9 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -53,20 +55,53 @@ class DetailsFragment : Fragment() {
         lifecycleScope.launch {
 
             viewModel.getMovieDetails(id).collect{result ->
+                handleSuccess(result)
+                { successResult ->
+                    binding.progressBar.visibility = View.INVISIBLE
+                    Glide.with(requireContext()).load(image_base_url + successResult.poster_path).into(binding.poster)
+                    Glide.with(requireContext()).load(image_base_url + successResult.backdrop_path).into(binding.dropPoster)
 
-                when(result)
-                {
-                    is ResponseResult.Loading -> Log.d("loading", "Loading....")
-                    is ResponseResult.Success -> {
-                        Glide.with(requireContext()).load(image_base_url + result.successData.poster_path).into(binding.poster)
-                        Glide.with(requireContext()).load(image_base_url + result.successData.backdrop_path).into(binding.dropPoster)
+                    successResult.apply {
+
+                        binding.title.text = this.title
+                        binding.date.text = this.release_date
+                        val hour = this.runtime / 60
+                        val min = this.runtime % 60
+                        binding.movieDuration.text = "$hour h $min min"
+                        binding.genre.text = this.genres[0].name + "," + this.genres[1].name +"," + this.genres[2].name
+                        binding.tagLine.text = this.tagline
+                        binding.overView.maxLines = 2
+                        binding.overView.ellipsize = TextUtils.TruncateAt.END
+                        binding.overView.text = this.overview
+
+                       val percentage = this.popularity.toInt() % 100
+                        binding.popularityRate.progress =  percentage
+                        binding.progressPercentage.text = percentage.toString() + "%"
                     }
-
-                    is ResponseResult.Failure -> Log.d("failure", result.error.toString())
                 }
             }
         }
     }
 
+    private fun<T> handleSuccess(result : ResponseResult<T>, onSuccess : (T) -> Unit)
+    {
+        handleResult(result, success = onSuccess)
+        {
+            binding.progressBar.visibility = View.INVISIBLE
+            Log.d("details error", it!!)
+        }
+    }
+
+    private fun<T> handleResult(result : ResponseResult<T>, success : (T) -> Unit, onFailure : (String?) -> Unit)
+    {
+        when(result)
+        {
+            is ResponseResult.Success -> success(result.successData)
+            is ResponseResult.Failure -> onFailure(result.error)
+            is ResponseResult.Loading -> {
+                binding.progressBar.visibility = View.VISIBLE
+            }
+        }
+    }
 }
 

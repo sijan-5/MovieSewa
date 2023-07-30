@@ -1,24 +1,24 @@
 package com.example.moviesewa.mvvm
 
 import android.util.Log
+import com.example.moviesewa.data_classes.LatestTVID
 import com.example.moviesewa.data_classes.MovieDetails
 import com.example.moviesewa.data_classes.MoviesCollection
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import retrofit2.HttpException
 import javax.inject.Inject
 
-class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : RepositoryInterface{
-    override suspend fun fetchMovies() : kotlinx.coroutines.flow.Flow<ResponseResult<MoviesCollection>>{
+class MovieRepository @Inject constructor(private val remoteMovieApi : MovieServiceApi)  : RepositoryInterface{
+    override suspend fun fetchMovies(time_window: String): kotlinx.coroutines.flow.Flow<ResponseResult<MoviesCollection>>{
        return checkApiResponse{
-           movieApi.getMovieList("day")
+           remoteMovieApi.getMovieList(time_window)
        }
     }
 
     override suspend fun getMovieDetails(movieId :Int): Flow<ResponseResult<MovieDetails>> {
         return checkApiResponse {
-            movieApi.getMovieDetails(movieId)
+            remoteMovieApi.getMovieDetails(movieId)
         }
     }
 
@@ -27,7 +27,14 @@ class MovieRepository @Inject constructor(val movieApi : MovieServiceApi)  : Rep
     ): Flow<ResponseResult<MoviesCollection>> {
 
         return checkApiResponse {
-            movieApi.searchMovie(query)
+            remoteMovieApi.searchMovie(query)
+        }
+    }
+
+    override suspend fun latestTvId(): Flow<ResponseResult<LatestTVID>> {
+
+       return  checkApiResponse {
+            remoteMovieApi.latestTV()
         }
     }
 }
@@ -44,6 +51,7 @@ fun <T> checkApiResponse(block : suspend () -> T)  : Flow<ResponseResult<T>>
         catch (e:Exception)
         {
             Log.d(" hi error", e.message.toString())
+            emit(ResponseResult.Failure(e.message))
         }
     }.catch {
         Log.d("catch error", it.message.toString())

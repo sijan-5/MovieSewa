@@ -9,51 +9,46 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviesewa.MyDiffUtil
 import com.example.moviesewa.R
 import com.example.moviesewa.data_classes.MovieData
+import com.example.moviesewa.databinding.TrendingMovieRecyclerViewItemBinding
 
 
- val image_base_url = "https://image.tmdb.org/t/p/w500"
-class MovieAdapter(private var movieList : List<MovieData>,private val context : Context,val  onClick : (Int) ->Unit) : RecyclerView.Adapter<MovieAdapter.MovieViewHolder>()
+const val image_base_url = "https://image.tmdb.org/t/p/w500"
+class MovieAdapter(val  onClick : (Int) ->Unit) : androidx.recyclerview.widget.ListAdapter<MovieData, MovieAdapter.MovieViewHolder>(DiffUtilCallBack())
 {
-
+    
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.trending_movie_recycler_view_item, parent, false)
-        return MovieViewHolder(view)
-    }
-
-    override fun getItemCount(): Int {
-        return movieList.size
+        val inflator = LayoutInflater.from(parent.context)
+        val binding = TrendingMovieRecyclerViewItemBinding.inflate(inflator, parent, false)
+        return MovieViewHolder(binding, parent.context)
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-
-        val item = movieList[position]
-        holder.movieTitle.text = item.title
-        holder.movieReleaseDate.text = item.releaseData
-        Glide.with(context).load(image_base_url + item.posterPath).into(holder.posterView)
-
+        val item = getItem(position)
+        holder.bindData(item)
         holder.itemView.setOnClickListener {
             this.onClick(item.movieId)
         }
     }
 
-    fun setData(newMovieList : List<MovieData>)
+    class  DiffUtilCallBack  : DiffUtil.ItemCallback<MovieData>()
     {
-        val diffUtil = MyDiffUtil(movieList, newMovieList)
-        val diffResult = DiffUtil.calculateDiff(diffUtil)
-        movieList = newMovieList
-        diffResult.dispatchUpdatesTo(this)
+        override fun areItemsTheSame(oldItem: MovieData, newItem: MovieData): Boolean  =
+            oldItem.movieId == newItem.movieId
+
+        override fun areContentsTheSame(oldItem: MovieData, newItem: MovieData): Boolean  =
+            oldItem == newItem
     }
-
-
-
-    class MovieViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
+    
+    class MovieViewHolder(private val binding : TrendingMovieRecyclerViewItemBinding, val context: Context) : RecyclerView.ViewHolder(binding.root)
     {
-         val posterView: ImageView = itemView.findViewById(R.id.posterView)
-         val movieTitle: TextView = itemView.findViewById(R.id.movieTitle)
-         val movieReleaseDate : TextView = itemView.findViewById(R.id.movieReleaseDate)
+        fun bindData(item : MovieData)
+        {
+            binding.movieTitle.text = item.title
+            binding.movieReleaseDate.text= item.releaseDate
+            Glide.with(context).load(image_base_url + item.posterPath).into(binding.posterView)
+        }
     }
 
 }

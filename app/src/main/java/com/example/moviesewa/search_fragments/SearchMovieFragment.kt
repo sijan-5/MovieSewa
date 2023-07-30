@@ -5,10 +5,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.moviesewa.adapter.ARG_OBJECT
@@ -47,9 +45,6 @@ class SearchMovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-
-
-
         arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
            val  query = getString(ARG_OBJECT).toString()
             getSearchResponse(query)
@@ -76,8 +71,9 @@ class SearchMovieFragment : Fragment() {
                                         it.overview
                                     )
                                 )
-                                binding.searchMovieRecyclerView.adapter =
-                                    SearchAdapter(list = searchMovieList, requireContext())
+                                val adapter = SearchAdapter()
+                                adapter.submitList(searchMovieList)
+                                binding.searchMovieRecyclerView.adapter = adapter
                             }
                         }
                     }

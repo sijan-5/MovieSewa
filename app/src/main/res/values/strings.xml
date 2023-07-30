@@ -14,5 +14,7 @@
     <string name="week">Week</string>
     <string name="day">Day</string>
     <string name="search_results">Search Results</string>
+    <string name="daily">day</string>
+    <string name="weekly">week</string>
 
 </resources>

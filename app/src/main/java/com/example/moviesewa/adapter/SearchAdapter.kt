@@ -1,51 +1,62 @@
 package com.example.moviesewa.adapter
 
 import android.content.Context
-import android.text.Layout
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import android.widget.ListAdapter
 import android.widget.TextView
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.moviesewa.R
 import com.example.moviesewa.data_classes.SearchMovies
-import kotlin.math.truncate
+import com.example.moviesewa.databinding.SearchItemsBinding
 
-class SearchAdapter(val list : List<SearchMovies>,val  context :Context) : RecyclerView.Adapter<SearchAdapter.SearchViewHolder>()  {
-
+class SearchAdapter() :
+    androidx.recyclerview.widget.ListAdapter<SearchMovies, SearchAdapter.SearchViewHolder>(MyDiffUtilCallBack())  {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.search_items,parent, false)
-        return SearchViewHolder(view).apply {
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = SearchItemsBinding.inflate(inflater,parent, false)
+        return SearchViewHolder(binding, parent.context).apply {
             terminateText()
         }
     }
 
-    override fun getItemCount(): Int = list.size
 
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
-        val item = list[position]
-        Glide.with(context).load(image_base_url + item.posterPath).into(holder.posterImage)
-        holder.title.text = item.title
-        holder.releaseDate.text = item.releaseDate
-        holder.overView.text = item.overView
+        val item = getItem(position)
+        holder.bindData(item)
     }
 
-    class SearchViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView)
+    class SearchViewHolder(private val binding: SearchItemsBinding, val context: Context) : RecyclerView.ViewHolder(binding.root)
     {
-        val posterImage : AppCompatImageView = itemView.findViewById(R.id.searchedPoster)
-        val title : TextView = itemView.findViewById(R.id.searchTitle)
-        val releaseDate : TextView = itemView.findViewById(R.id.search_ReleaseDate)
-        val overView : TextView = itemView.findViewById(R.id.search_overview)
 
         fun terminateText()
         {
-            overView.maxLines = 2
-            overView.ellipsize = TextUtils.TruncateAt.END
+            binding.searchOverview.maxLines = 2
+            binding.searchOverview.ellipsize = TextUtils.TruncateAt.END
+        }
+        fun bindData(item : SearchMovies)
+        {
+            Glide.with(context).load(image_base_url + item.posterPath).into(binding.searchedPoster)
+             binding.searchTitle.text= item.title
+             binding.searchReleaseDate.text= item.releaseDate
+             binding.searchOverview.text = item.overView
         }
     }
 
+    class MyDiffUtilCallBack : DiffUtil.ItemCallback<SearchMovies>()
+    {
+        override fun areItemsTheSame(oldItem: SearchMovies, newItem: SearchMovies): Boolean =
+            oldItem.posterPath == newItem.posterPath
+
+        override fun areContentsTheSame(oldItem: SearchMovies, newItem: SearchMovies): Boolean =
+            oldItem == newItem
+    }
+
 }
+
+
