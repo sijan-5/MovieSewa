@@ -26,7 +26,7 @@ import java.util.Objects
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MovieViewModel by viewModels()
 
@@ -132,6 +132,12 @@ class HomeFragment : Fragment() {
             R.id.action_homeFragment_to_searchActivity,
             searchQueryBundle
         )
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 

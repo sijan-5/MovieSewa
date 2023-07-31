@@ -6,23 +6,25 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.moviesewa.Constants
 import com.example.moviesewa.adapter.image_base_url
 import com.example.moviesewa.databinding.FragmentDetailsBinding
-import com.example.moviesewa.mvvm.view_models.MovieDetailViewModel
 import com.example.moviesewa.mvvm.ResponseResult
+import com.example.moviesewa.mvvm.view_models.MovieDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
 class DetailsFragment : Fragment() {
-//    val viewModel: MovieViewModel by viewModels()
-    val viewModel : MovieDetailViewModel by viewModels()
+    //    val viewModel: MovieViewModel by viewModels()
+    val viewModel: MovieDetailViewModel by viewModels()
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -31,6 +33,7 @@ class DetailsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
+
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -38,10 +41,16 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         val bundle = arguments
         var id = 0
         if (bundle != null) {
             id = bundle.getInt(Constants.MOVIE_ID)
+        }
+
+        binding.backArrow.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         viewModel.getMovieDetail(id)
@@ -63,7 +72,7 @@ class DetailsFragment : Fragment() {
                         val min = this.runtime % 60
                         binding.movieDuration.text = "$hour h $min min"
 
-                        binding.genre.text = this.genres.joinToString(separator = ",", limit = 3){
+                        binding.genre.text = this.genres.joinToString(separator = ",", limit = 3) {
                             it.name
                         }
                         binding.tagLine.text = this.tagline
@@ -101,6 +110,9 @@ class DetailsFragment : Fragment() {
         }
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }
 

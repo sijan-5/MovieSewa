@@ -24,8 +24,8 @@ class ViewPagerAdapter(fragment: FragmentActivity, val query :String?) :
             0 -> {
                 getSearchFragment()
             }
-            1 ->  DetailsFragment()
-            2 ->  MoviesFragment()
+            1 ->  PeopleFragment()
+            2 ->  PeopleFragment()
             else ->
                 PeopleFragment()
         }
