@@ -1,16 +1,13 @@
 package com.example.moviesewa
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.moviesewa.databinding.ActivityMainBinding
-import com.example.moviesewa.mvvm.MovieViewModel
+import com.example.moviesewa.mvvm.view_models.MovieViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 
 
 @AndroidEntryPoint

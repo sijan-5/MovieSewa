@@ -9,12 +9,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.moviesewa.adapter.ARG_OBJECT
+import com.example.moviesewa.Constants
 import com.example.moviesewa.adapter.SearchAdapter
 import com.example.moviesewa.data_classes.SearchMovies
 import com.example.moviesewa.databinding.FragmentSearchMovieBinding
-import com.example.moviesewa.mvvm.MovieViewModel
+import com.example.moviesewa.mvvm.view_models.MovieViewModel
 import com.example.moviesewa.mvvm.ResponseResult
+import com.example.moviesewa.mvvm.view_models.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -23,15 +24,8 @@ import kotlinx.coroutines.launch
 class SearchMovieFragment : Fragment() {
 
     private lateinit var binding: FragmentSearchMovieBinding
-    private val viewModel: MovieViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,23 +39,30 @@ class SearchMovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-        arguments?.takeIf { it.containsKey(ARG_OBJECT) }?.apply {
-           val  query = getString(ARG_OBJECT).toString()
+        arguments?.takeIf { it.containsKey(Constants.SEARCH_QUERY) }?.apply {
+           val  query = getString(Constants.SEARCH_QUERY).toString()
             getSearchResponse(query)
-            Log.d("qqqq", query)
         }
     }
 
     private fun getSearchResponse(query :String) {
-        Log.d("qqqqq", query.toString())
         val searchMovieList = mutableListOf<SearchMovies>()
+        viewModel.searchMovieCollection(query)
         lifecycleScope.launch {
-            viewModel.searchMovie(query)
+            viewModel.searchState
                 .collect { result ->
                     when (result) {
-                        is ResponseResult.Loading -> Log.d("i am not", "loading")
-                        is ResponseResult.Failure -> Log.d("i am not", "failure")
+                        is ResponseResult.Loading -> {
+                            binding.progressBar.visibility = View.VISIBLE
+                        }
+
+                        is ResponseResult.Failure ->{
+                            Log.d("search error", "${result.error}")
+                            binding.progressBar.visibility = View.GONE
+                        }
+
                         is ResponseResult.Success -> {
+                            binding.progressBar.visibility = View.GONE
                             result.successData.results.map {
                                 searchMovieList.add(
                                     SearchMovies(

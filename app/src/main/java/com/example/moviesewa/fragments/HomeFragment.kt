@@ -11,15 +11,17 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.moviesewa.Constants
 import com.example.moviesewa.R
 import com.example.moviesewa.adapter.MovieAdapter
 import com.example.moviesewa.data_classes.Movie
 import com.example.moviesewa.data_classes.MovieData
 import com.example.moviesewa.databinding.FragmentHomeBinding
-import com.example.moviesewa.mvvm.MovieViewModel
+import com.example.moviesewa.mvvm.view_models.MovieViewModel
 import com.example.moviesewa.mvvm.ResponseResult
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.Objects
 
 
 @AndroidEntryPoint
@@ -32,7 +34,7 @@ class HomeFragment : Fragment() {
         MovieAdapter()
         {
             val bundle = bundleOf(
-                "ID" to it
+                Constants.MOVIE_ID to it
             )
             findNavController().navigate(
                 R.id.action_homeFragment_to_detailsFragment,
@@ -52,43 +54,27 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setUpRecyclerView()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getLatestTvId().collect { result ->
-                when (result) {
-                    is ResponseResult.Failure -> Log.d("f", "f")
-                    is ResponseResult.Success -> viewModel.getLatestTvId()
-                    is ResponseResult.Loading -> Log.d("f", "l")
-                }
-            }
-        }
+        fetchTrendingMovies()
 
         binding.switchOnOff.setOnCheckedChangeListener { _, checked ->
             when {
-                checked -> fetchDailyTrending(context!!.getString(R.string.weekly))
-                else -> fetchDailyTrending(context!!.getString(R.string.daily))
+                checked -> viewModel.getMovies(MovieViewModel.TimeWindow.Day)
+                else -> viewModel.getMovies(MovieViewModel.TimeWindow.Week)
             }
         }
+
         binding.searchButton.setOnClickListener {
-            val inputQuery = binding.searchEditText.text.toString()
-            val searchQueryBundle = bundleOf("sKey" to inputQuery)
-            findNavController().navigate(
-                R.id.action_homeFragment_to_searchActivity,
-                searchQueryBundle
-            )
+            handleSearchQuery()
         }
-        fetchDailyTrending(context!!.getString(R.string.weekly))
     }
 
-    private fun fetchDailyTrending(time_window: String) {
+    private fun fetchTrendingMovies() {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getMovies(time_window).collect { result ->
+            viewModel.movieStateFlow.collect { result ->
                 handleResult(result) { successResult ->
-
                     val movieList = successResult.results.map {
                         it.toMovieData()
                     }
-
                     adapter.submitList(movieList)
                     binding.progressBar.visibility = View.INVISIBLE
                 }
@@ -102,7 +88,6 @@ class HomeFragment : Fragment() {
         { failure ->
             binding.progressBar.visibility = View.INVISIBLE
             Log.d("movieError", failure)
-
         }
     }
 
@@ -119,7 +104,6 @@ class HomeFragment : Fragment() {
             is ResponseResult.Success -> success(result.successData)
         }
     }
-
 
     private fun Movie.toMovieData(): MovieData {
         return MovieData(
@@ -139,6 +123,16 @@ class HomeFragment : Fragment() {
         }
     }
 
+
+    private fun handleSearchQuery()
+    {
+        val inputQuery = binding.searchEditText.text.toString()
+        val searchQueryBundle = bundleOf(Constants.SEARCH_QUERY to inputQuery)
+        findNavController().navigate(
+            R.id.action_homeFragment_to_searchActivity,
+            searchQueryBundle
+        )
+    }
 }
 
 

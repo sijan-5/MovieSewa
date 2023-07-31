@@ -18,8 +18,8 @@ class MovieAdapter(val onClick: (Int) -> Unit) :
     ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
-        val inflator = LayoutInflater.from(parent.context)
-        val binding = TrendingMovieRecyclerViewItemBinding.inflate(inflator, parent, false)
+        val inflater = LayoutInflater.from(parent.context)
+        val binding = TrendingMovieRecyclerViewItemBinding.inflate(inflater, parent, false)
         return MovieViewHolder(binding, parent.context)
     }
 

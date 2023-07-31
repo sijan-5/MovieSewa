@@ -1,16 +1,16 @@
 package com.example.moviesewa.adapter
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.moviesewa.Constants
 import com.example.moviesewa.fragments.DetailsFragment
 import com.example.moviesewa.fragments.MoviesFragment
 import com.example.moviesewa.fragments.PeopleFragment
 import com.example.moviesewa.search_fragments.SearchMovieFragment
 
-const val ARG_OBJECT = "object"
+
 
 class ViewPagerAdapter(fragment: FragmentActivity, val query :String?) :
     FragmentStateAdapter(fragment) {
@@ -19,27 +19,25 @@ class ViewPagerAdapter(fragment: FragmentActivity, val query :String?) :
     }
 
     override fun createFragment(position: Int): Fragment {
-      Log.d("qqq", query.toString())
-        when (position) {
+
+        return when(position) {
             0 -> {
-                returnSearchFragment()
+                getSearchFragment()
             }
-            1 -> return DetailsFragment()
-            2 -> return MoviesFragment()
+            1 ->  DetailsFragment()
+            2 ->  MoviesFragment()
             else ->
                 PeopleFragment()
         }
-        return returnSearchFragment()
     }
 
-    fun returnSearchFragment(): Fragment {
+    private fun getSearchFragment(): Fragment {
         val fragment = SearchMovieFragment()
         fragment.arguments = Bundle().apply {
-            putString(ARG_OBJECT, query)
+            putString(Constants.SEARCH_QUERY, query)
         }
         return fragment
     }
-
 }
 
 
